@@ -5,8 +5,9 @@ output: word_document
 ---
 ```{r}
 library(MASS)
-library(rgl)
+# library(rgl)
 library(lattice)
+options(digits = 4)
 ```
 ## Q1. 
 Suppose mean vector and the variance-covariance matrix given below.
@@ -15,153 +16,73 @@ Suppose mean vector and the variance-covariance matrix given below.
 mu <- c(-1, 2, -5)
 sigma <- matrix(c(9, 4, 1,
                   4, 16, -1,
-                  1, -1, 14), nrow = 3, byrow = TRUE)
+                  1, -1, 4), nrow = 3, byrow = TRUE)
 ```
 
 ### (a)
-Calculate population correlation matrix.
-
 Note that population correlation matrix equals $\rho = D^{-1/2} \sum D^{1/2}$.
 Also, since $D^{-1/2} = diag(\frac{1}{\sqrt\sigma_{ii}})$ and $\sigma_{11} = 9, \sigma_{22} = 16, \sigma_{33} = 4$, We can calculate $D^{-1/2}$.
 
 $$D^{-1/2} = \begin{pmatrix}
-1/3 & 0 & 0 \\
-0 & 1/4 & 0 \\
-0 & 0 & 1/2
+\frac{1}{3} & 0 & 0 \\
+0 & \frac{1}{4} & 0 \\
+0 & 0 & \frac{1}{2}
 \end{pmatrix}$$
 
 Therefore, the population correlation matrix equals
-$$\rho =  D^{-1/2} \sum D^{1/2} = \begin{pmatrix}
-1/3 & 0 & 0 \\
-0 & 1/4 & 0 \\
-0 & 0 & 1/2
-\end{pmatrix}
-\begin{pmatrix}
-9 & 4 & 1 \\
-4 & 16 & -1 \\
-1 & -1 & 14
-\end{pmatrix}
-\begin{pmatrix}
-1/3 & 0 & 0 \\
-0 & 1/4 & 0 \\
-0 & 0 & 1/2
-\end{pmatrix}
-=\begin{pmatrix}
-1 & 1/3 & 1/6 \\
-1/3 & 1 & -1/8 \\
-1/6 & -1/8 & 1
-\end{pmatrix}
-$$
 
 ```{r}
 d <- matrix(c(1/3, 0, 0,
               0, 1/4, 0,
               0, 0, 1/2), nrow = 3, byrow = TRUE)
-sigma <- matrix(c(9, 4, 1,
-                  4, 16, -1,
-                  1, -1, 4), nrow = 3, byrow = TRUE)
 
 ans <- d %*% sigma %*% d
 print(ans)
 ```
 
+$$\rho = \begin{pmatrix}
+1 & \frac{1}{3} & \frac{1}{6} \\
+\frac{1}{3} & 1 & -\frac{1}{8} \\
+\frac{1}{6} & -\frac{1}{8} & 1
+\end{pmatrix}$$
+
 ### (b)
 
 Let $a'= [1, -1, 1]$ and $x = [x_1, x_2, x_3]$ where $Z_1 = a'X$.
-$$E(Z_1) = E(a'X) = a'E(X) = a'\mu = 
-\begin{pmatrix}
-1 & -1 & 1 \\
-\end{pmatrix} \cdot
-\begin{pmatrix}
--1 \\
-2 \\
--5
-\end{pmatrix}
-= -8
-$$
 
-$$Var(Z_1) = a'\sum a = 
-\begin{pmatrix}
-1 & -1 & 1 \\
-\end{pmatrix} \cdot
-\begin{pmatrix}
-9 & 4 & 1 \\
-4 & 16 & -1 \\
-1 & -1 & 4
-\end{pmatrix} \cdot
-\begin{pmatrix}
-1 \\
--1 \\
-1
-\end{pmatrix}
-= 25
-$$
+$$E(Z_1) = E(a'X) = a'\mu$$
+$$Var(Z_1) = a'\sum a $$
+
 ```{r}
 a <- matrix(c(1, -1, 1), nrow = 3)
-mu <- c(-1, 2, -5)
-sigma <- matrix(c(9, 4, 1,
-                  4, 16, -1,
-                  1, -1, 4), nrow = 3, byrow = TRUE)
 e1 = t(a) %*% mu
 var1 = t(a) %*% sigma %*% a
 
-print("Mean of Z1:")
-print(e1)
-
-print("Variance of Z1:")
-print(var1)
+cat("Mean of Z1:", e1[1], "\n")
+cat("Variance of Z1:", var1[1], "\n")
 
 ```
-
+The mean of Z1 is -8, and the variance is 25.
 
 ### (c)
 Let $b'= [-1, 2, 3]$ and $x = [x_1, x_2, x_3]$ where $Z_2 = b'X$.
-$$E(Z_2) = E(b'X) = b'E(X) = b'\mu = 
-\begin{pmatrix}
--1 & 2 & 3 \\
-\end{pmatrix} \cdot
-\begin{pmatrix}
--1 \\
-2 \\
--5
-\end{pmatrix}
-= -10
-$$
+$$E(Z_2) = E(b'X) = b'\mu$$
 
-$$Var(Z_2) = b'\sum b = 
-\begin{pmatrix}
--1 & 2 & 3 \\
-\end{pmatrix} \cdot
-\begin{pmatrix}
-9 & 4 & 1 \\
-4 & 16 & -1 \\
-1 & -1 & 4
-\end{pmatrix} \cdot
-\begin{pmatrix}
--1 \\
-2 \\
-3
-\end{pmatrix}
-= 75
-$$
+$$Var(Z_2) = b'\sum b$$
 ```{r}
 b <- matrix(c(-1, 2, 3), nrow = 3)
-mu <- c(-1, 2, -5)
-sigma <- matrix(c(9, 4, 1,
-                  4, 16, -1,
-                  1, -1, 4), nrow = 3, byrow = TRUE)
+
 e2 = t(b) %*% mu
 var2 = t(b) %*% sigma %*% b
 
-print("Mean of Z2:")
-print(e2)
-
-print("Variance of Z2:")
-print(var2)
+cat("Mean of Z2:", e2[1], "\n")
+cat("Variance of Z2:", var2[1], "\n")
 
 ```
+The mean of Z2 is -10, and the variance is 75.
 
 ### (d)
+1) $E(Z_3)$
 
 $$ E(Z_3) = E\begin{pmatrix}
 Z_1 \\
@@ -173,31 +94,14 @@ Z_1 \\
 -10
 \end{pmatrix}
 $$
-$Var(Z_1) = 25$ and $Var(-Z_2) = Var(Z_2) = 75$
+2) $Cov(Z_3)$ :
 
-$$
-Cov(Z_1, -Z_2) = Cov(a'x, -b'x) = -a'\sum b
-= 
-- 1 \cdot
-\begin{pmatrix}
-1 & -1 & 1 \\
-\end{pmatrix} \cdot
-\begin{pmatrix}
-9 & 4 & 1 \\
-4 & 16 & -1 \\
-1 & -1 & 4
-\end{pmatrix} \cdot
-\begin{pmatrix}
--1 \\
-2 \\
-3
-\end{pmatrix}
-= 14
-$$
+Variance for Z_1 and Z_2 is given as $Var(Z_1) = 25$ and $Var(-Z_2) = Var(Z_2) = 75$.
+
+$$Cov(Z_1, -Z_2) = Cov(a'x, -b'x) = a'\sum b$$
 ```{r}
-cov_z1z2 = -t(a) %*% sigma %*% b
-print("Covariance for Z1, Z2")
-print(cov_z1z2)
+cov_z1z2 = t(a) %*% sigma %*% b
+cat("Covariance for Z1, Z2: ", cov_z1z2)
 ```
 
 Therefore $$ Cov(Z_3) = 
@@ -212,17 +116,16 @@ $$
 ```{r}
 n <- 50
 sample_data <- mvrnorm(n, mu, sigma)
-print("Sample mean")
-print(colMeans(sample_data))
-print("Sample Variance")
-print(cov(sample_data))
+cat("Sample mean", colMeans(sample_data), '\n')
+cat("Sample Variance", '\n')
+cov(sample_data)
 ```
 
 ### (f)
 ``` {r}
 p <- ncol(sample_data)
 par(mfrow=c(2,2))
-for(i in 1:p){qqnorm(sample_data[,i],xlab="Quantiles of Standard Normal",ylab=paste("Var",i))
+for(i in 1:p){qqnorm(sample_data[,i],xlab=paste("Quantile for Var",i))
     qqline(sample_data[,i])}
 
 ```
@@ -230,7 +133,7 @@ for(i in 1:p){qqnorm(sample_data[,i],xlab="Quantiles of Standard Normal",ylab=pa
 The plot shows that the distribution follows the multivariate normal
 distribution, which means that the plot follows the straight line.
 
-## (2)
+## Q2.
 ### (a)
 ``` {r}
 par(mfrow=c(2,2))
@@ -267,12 +170,9 @@ We can identify one outlier by drawing the graph.
 ### (d)
 
 ```{r}
-print("Sample mean")
-xm <- colMeans(data)
-print(xm)
-print("Sample Variance")
-Sx <- cov(data)
-print(Sx)
+cat("Sample mean:", colMeans(data), '\n')
+cat("Sample Variance", '\n')
+cov(data)
 ```
 
 ### (e)
@@ -297,14 +197,14 @@ The plot for X3 shows that the distribution does not follow the multivariate nor
 
 ### (f)
 ```{r}
-di2 = mahalanobis(data, xm, Sx)
-di2
+di_sq = mahalanobis(data, colMeans(data), cov(data))
+di_sq
 ```
 
 ### (g)
 ```{r}
-cnt <- length(xm)
-qqmath(di2,distribution = function(p) qchisq(p,df=cnt))
+cnt <- 3
+qqmath(di_sq,distribution = function(p) qchisq(p,df=cnt))
 ```
 
 This data set follows the  multivariate normal distribution since the plot follows the chi-Squared distribution (except 1 outlier).
