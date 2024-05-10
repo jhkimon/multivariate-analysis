@@ -97,6 +97,7 @@ drug =
 drug.pca = princomp(covmat=drug,cor=T)
 drug.pca$loadings
 drug.pca$sdev^2
+drug.pca$sdev^2/13
 
 # Draw a Scree plot.
 screeplot(drug.pca, npcs=13,type="l")
